@@ -1,12 +1,23 @@
 .order-book-container {
   background-color: var(--light-blue);
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem;
+  min-height: 100vh;
 }
 
 .order-book-container header,
-.order-book-container .order-book-body {
+.buy-container,
+.sell-container {
   background-color: var(--dark-blue);
   color: var(--default-text-color);
+}
+
+.order-book-container header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+  padding: 0.5rem 3rem 0.5rem 0.5rem;
 }
 
 .order-book-container header select {
@@ -14,4 +25,36 @@
   border: none;
   border-radius: var(--all-rounded-corners);
   color: var(--default-text-color);
+}
+
+.order-book-body {
+  display: flex;
+  justify-content: space-around;
+  flex-grow: 1;
+}
+
+.buy-container,
+.sell-container {
+  display: flex;
+  flex-basis: 100%;
+  justify-content: space-around;
+  flex-direction: row;
+}
+
+.buy-container {
+  margin-right: 0.15rem;
+}
+
+.order-book-container header h2 {
+  margin: 0;
+}
+
+.order-book-footer {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0.5rem 0.5rem 1rem;
+}
+
+.order-book-footer > .primary {
+  margin-right: 0.5rem;
 }

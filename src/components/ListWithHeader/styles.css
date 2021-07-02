@@ -1,0 +1,25 @@
+.list-with-header {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto Mono', monospace;
+}
+
+.list-with-header h3 {
+  color: var(--dark-text-color);
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.list-with-header ol {
+  font-size: 0.8rem;
+  font-weight: 600;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  text-align: right;
+}
+
+.list-with-header ol li {
+  padding: 0.25rem;
+}
