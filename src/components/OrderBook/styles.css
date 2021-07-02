@@ -1,0 +1,17 @@
+.order-book-container {
+  background-color: var(--light-blue);
+  padding: 1rem;
+}
+
+.order-book-container header,
+.order-book-container .order-book-body {
+  background-color: var(--dark-blue);
+  color: var(--default-text-color);
+}
+
+.order-book-container header select {
+  background-color: var(--light-blue);
+  border: none;
+  border-radius: var(--all-rounded-corners);
+  color: var(--default-text-color);
+}
