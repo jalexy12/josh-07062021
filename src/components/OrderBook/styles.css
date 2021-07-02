@@ -42,10 +42,31 @@
 }
 
 .buy-container {
+  order: 1;
+}
+
+.sell-container {
+  order: 2;
+}
+
+.buy-container {
   margin-right: 0.15rem;
 }
 
+.buy-container .total {
+  order: 1;
+}
+
+.buy-container .size {
+  order: 2;
+}
+
+.buy-container .price {
+  order: 3;
+}
+
 .order-book-container header h2 {
+  font-size: 1.2rem;
   margin: 0;
 }
 
@@ -57,4 +78,44 @@
 
 .order-book-footer > .primary {
   margin-right: 0.5rem;
+}
+
+@media only screen and (max-width: 600px) {
+  .order-book-body {
+    flex-direction: column;
+  }
+
+  .sell-container,
+  .buy-container {
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+  }
+
+  .buy-container h3 {
+    display: none;
+  }
+
+  .buy-container {
+    order: 2;
+  }
+
+  .sell-container ol {
+    transform: rotate(180deg);
+  }
+
+  .sell-container ol li {
+    transform: rotate(-180deg);
+  }
+
+  .buy-container .price {
+    order: 1;
+  }
+
+  .buy-container .total {
+    order: 3;
+  }
+
+  .sell-container {
+    order: 1;
+  }
 }

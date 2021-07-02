@@ -29,14 +29,17 @@ export default function OrderBook() {
       <div className="order-book-body">
         <div className="buy-container">
           <ListWithHeader
+            className="total"
             headerTitle="Total"
             listItems={randomArray(17, 2000, 200000)}
           />
           <ListWithHeader
+            className="size"
             headerTitle="Size"
             listItems={randomArray(17, 2000, 50000)}
           />
           <ListWithHeader
+            className="price"
             headerTitle="Price"
             listItems={randomArray(17, 47000, 47000)}
           />
