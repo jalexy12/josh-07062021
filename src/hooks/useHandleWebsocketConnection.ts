@@ -1,13 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { CryptoResponse } from "../types";
+import { CryptoResponse, WebSocketState } from "../types";
 import { SOCKET_STATES, SocketHandler } from "../socketHandler";
 import { BTC_PRODUCT, EVENT_TYPE, FEED_TYPE } from "../constants";
-
-interface WebSocketState {
-  isClosed: boolean;
-  isError: boolean;
-  data?: object | null;
-}
 
 export default function useHandleWebsocketConnection(
   socketHandler: SocketHandler
@@ -61,7 +55,7 @@ export default function useHandleWebsocketConnection(
       onOpen: handleOpen,
     });
 
-    return socketHandler.terminate;
+    return socketHandler.terminate.bind(socketHandler);
   }, [handleError, handleClose, handleMessage, handleOpen]);
 
   return {
