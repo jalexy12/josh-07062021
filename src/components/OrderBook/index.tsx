@@ -1,11 +1,7 @@
 import "./styles.css";
 import ListWithHeader from "../ListWithHeader";
 
-const randomArray = (
-  length: number,
-  min: number,
-  max: number
-): Array<number> => {
+const randomArray = (length: number, min: number, max: number): number[] => {
   const items = [];
 
   for (let i = 0; i < length; i++) {

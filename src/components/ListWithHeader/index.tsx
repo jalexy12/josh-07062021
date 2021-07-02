@@ -3,7 +3,7 @@ import "./styles.css";
 
 interface Props {
   headerTitle: string;
-  listItems: Array<string> | Array<number>;
+  listItems: string[] | number[];
   className?: string;
 }
 
@@ -11,7 +11,7 @@ export default function ListWithHeader({
   headerTitle,
   listItems = [],
   className = "",
-}: Props) {
+}: Props): JSX.Element {
   return (
     <div className={classNames("list-with-header", className)}>
       <h3>{headerTitle}</h3>
