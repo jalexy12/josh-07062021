@@ -1,0 +1,41 @@
+.book-segment {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto Mono', monospace;
+  width: 100%;
+}
+
+.book-segment > header > h3 {
+  font-size: 1rem;
+}
+
+.book-segment > header,
+.book-segment > .book-segment-body > .book-segment-row {
+  display: flex;
+}
+
+.book-segment-row {
+  margin-top: 0.5rem;
+}
+
+.book-segment > header > h3,
+.book-segment-row > div {
+  display: flex;
+  flex-basis: 30%;
+  justify-content: flex-end;
+}
+
+.book-segment-row > div {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.book-segment-body {
+  flex-direction: column;
+}
+
+.book-segment h3 {
+  color: var(--dark-text-color);
+  font-size: 1rem;
+  text-transform: uppercase;
+}

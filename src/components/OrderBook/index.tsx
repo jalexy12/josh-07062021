@@ -1,5 +1,8 @@
 import "./styles.css";
 import ListWithHeader from "../ListWithHeader";
+import BuySide from "../BookSegment";
+import { OrderBookState } from "../../types";
+import BookSegment from "../BookSegment";
 
 const randomArray = (length: number, min: number, max: number): number[] => {
   const items = [];
@@ -11,7 +14,10 @@ const randomArray = (length: number, min: number, max: number): number[] => {
   return items;
 };
 
-export default function OrderBook() {
+export default function OrderBook({
+  buys,
+  sells,
+}: OrderBookState): JSX.Element {
   return (
     <div className="order-book-container">
       <header>
@@ -23,37 +29,8 @@ export default function OrderBook() {
         </select>
       </header>
       <div className="order-book-body">
-        <div className="buy-container">
-          <ListWithHeader
-            className="total"
-            headerTitle="Total"
-            listItems={randomArray(17, 2000, 200000)}
-          />
-          <ListWithHeader
-            className="size"
-            headerTitle="Size"
-            listItems={randomArray(17, 2000, 50000)}
-          />
-          <ListWithHeader
-            className="price"
-            headerTitle="Price"
-            listItems={randomArray(17, 47000, 47000)}
-          />
-        </div>
-        <div className="sell-container">
-          <ListWithHeader
-            headerTitle="Price"
-            listItems={randomArray(17, 47000, 47000)}
-          />
-          <ListWithHeader
-            headerTitle="Size"
-            listItems={randomArray(17, 2000, 50000)}
-          />
-          <ListWithHeader
-            headerTitle="Total"
-            listItems={randomArray(17, 2000, 200000)}
-          />
-        </div>
+        <BookSegment data={buys} className="buy-container" />
+        <BookSegment data={sells} className="sell-container" />
       </div>
       <div className="order-book-footer">
         <button className="primary">Toggle Feed</button>

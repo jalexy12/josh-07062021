@@ -6,21 +6,21 @@
   min-height: 100vh;
 }
 
-.order-book-container header,
+.order-book-container > header,
 .buy-container,
 .sell-container {
   background-color: var(--dark-blue);
   color: var(--default-text-color);
 }
 
-.order-book-container header {
+.order-book-container > header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.25rem;
   padding: 0.5rem 3rem 0.5rem 0.5rem;
 }
 
-.order-book-container header select {
+.order-book-container > header select {
   background-color: var(--light-blue);
   border: none;
   border-radius: var(--all-rounded-corners);
@@ -37,32 +37,29 @@
 .sell-container {
   display: flex;
   flex-basis: 100%;
-  justify-content: space-around;
   flex-direction: row;
 }
 
 .buy-container {
   order: 1;
+  margin-right: 0.15rem;
+
 }
 
 .sell-container {
   order: 2;
 }
 
-.buy-container {
-  margin-right: 0.15rem;
+.sell-container .total {
+  order: 3;
 }
 
-.buy-container .total {
-  order: 1;
-}
-
-.buy-container .size {
+.sell-container .size {
   order: 2;
 }
 
-.buy-container .price {
-  order: 3;
+.sell-container .price {
+  order: 1;
 }
 
 .order-book-container header h2 {
@@ -88,10 +85,9 @@
   .sell-container,
   .buy-container {
     padding-bottom: 1rem;
-    padding-left: 1rem;
   }
 
-  .buy-container h3 {
+  .book-segment.buy-container header {
     display: none;
   }
 
@@ -99,20 +95,20 @@
     order: 2;
   }
 
-  .sell-container ol {
-    transform: rotate(180deg);
+  .sell-container .price {
+    order: 3;
   }
 
-  .sell-container ol li {
-    transform: rotate(-180deg);
-  }
-
-  .buy-container .price {
+  .sell-container .total {
     order: 1;
   }
 
-  .buy-container .total {
-    order: 3;
+  .sell-container .book-segment-body {
+    transform: rotate(180deg);
+  }
+
+  .sell-container .book-segment-body .book-segment-row {
+    transform: rotate(-180deg);
   }
 
   .sell-container {
