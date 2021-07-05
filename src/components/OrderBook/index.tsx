@@ -1,18 +1,7 @@
-import "./styles.css";
-import ListWithHeader from "../ListWithHeader";
-import BuySide from "../BookSegment";
 import { OrderBookState } from "../../types";
 import BookSegment from "../BookSegment";
 
-const randomArray = (length: number, min: number, max: number): number[] => {
-  const items = [];
-
-  for (let i = 0; i < length; i++) {
-    items.push(Math.floor(Math.random() * max + min));
-  }
-
-  return items;
-};
+import "./styles.css";
 
 export default function OrderBook({
   buys,

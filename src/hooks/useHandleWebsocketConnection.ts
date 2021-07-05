@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { CryptoResponse, WebSocketState } from "../types";
+import {
+  OrderBookState,
+  OrderBookStateHandlers,
+  WebSocketState,
+} from "../types";
 import { SOCKET_STATES, SocketHandler } from "../socketHandler";
 import { BTC_PRODUCT, EVENT_TYPE, FEED_TYPE } from "../constants";
+import useMassageCoinData from "./useMassageCoinData";
 
 export default function useHandleWebsocketConnection(
   socketHandler: SocketHandler
@@ -10,31 +15,38 @@ export default function useHandleWebsocketConnection(
   const [isClosed, setIsClosed] = useState<boolean>(
     socketHandler.currentSocketState !== SOCKET_STATES[SOCKET_STATES.OPEN]
   );
-  const [data, setData] = useState<null | CryptoResponse>(null);
+  const {
+    handleInitialData,
+    handleTricklingData,
+    ...coinData
+  }: OrderBookState & OrderBookStateHandlers = useMassageCoinData();
 
   const handleError = useCallback(() => setIsError(true), []);
   const handleClose = useCallback(() => setIsClosed(true), []);
-
-  const setInitialData = useCallback((response: CryptoResponse) => {
-    const { bids, asks } = response;
-
-    setData({ bids, asks });
-  }, []);
 
   const handleMessage = useCallback(
     (e) => {
       try {
         const response = JSON.parse(e.data);
 
-        if (response?.feed === "book_ui_1_snapshot") {
-          setInitialData(response);
-        } else {
+        if (response.event) {
+          console.warn("Connecting to WS", response);
+          return;
+        }
+
+        switch (response?.feed) {
+          case "book_ui_1_snapshot":
+            return handleInitialData(response);
+          case "book_ui_1":
+            return handleTricklingData(response);
+          default:
+            console.warn("Error receiving message: ", response);
         }
       } catch {
         setIsError(true);
       }
     },
-    [setInitialData]
+    [handleInitialData, handleTricklingData]
   );
 
   const handleOpen = useCallback(
@@ -61,6 +73,6 @@ export default function useHandleWebsocketConnection(
   return {
     isClosed,
     isError,
-    data,
+    data: coinData,
   };
 }

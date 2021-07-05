@@ -1,6 +1,7 @@
-import { BookSideState } from "../../types";
+import { BookSideState, BookSideStateItem } from "../../types";
 import "./styles.css";
 import classNames from "classnames";
+import BookSegmentRow from "./BookSegmentRow";
 
 interface Props {
   data: BookSideState;
@@ -11,7 +12,6 @@ export default function BookSegment({
   data,
   className = "",
 }: Props): JSX.Element {
-  console.log(data);
   return (
     <div className={classNames("book-segment", className)}>
       <header>
@@ -20,13 +20,10 @@ export default function BookSegment({
         <h3 className="price">Price</h3>
       </header>
       <div className="book-segment-body">
-        {Object.keys(data).map((dataPoint) => (
-          <div className="book-segment-row">
-            <div className="total">1</div>
-            <div className="size">{data[Number(dataPoint)]}</div>
-            <div className="price">{dataPoint}</div>
-          </div>
-        ))}
+        {data.map((dataPoint: BookSideStateItem) => {
+          const [price, size, total] = dataPoint;
+          return <BookSegmentRow price={price} size={size} total={total} />;
+        })}
       </div>
     </div>
   );

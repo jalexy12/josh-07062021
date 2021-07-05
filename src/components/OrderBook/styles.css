@@ -37,7 +37,6 @@
 .sell-container {
   display: flex;
   flex-basis: 100%;
-  flex-direction: row;
 }
 
 .buy-container {
