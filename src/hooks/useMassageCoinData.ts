@@ -50,11 +50,18 @@ function massageCoinData(
     {}
   );
 
-  const mergedData: BookDeltaResponse[] = Object.keys(valuesToInsert).map(
-    (price) => [Number(price), valuesToInsert[Number(price)]]
-  );
+  const toMerge: string[] = Object.keys(valuesToInsert);
+  const startIndex = toMerge.length > 25 ? toMerge.length - 25 : 0;
 
-  return mergedData.reduce(tabulateBook, []).slice(0, 25);
+  return toMerge
+    .slice(startIndex, toMerge.length)
+    .map(
+      (price): BookDeltaResponse => [
+        Number(price),
+        valuesToInsert[Number(price)],
+      ]
+    )
+    .reduce(tabulateBook, []);
 }
 
 export default function useMassageCoinData(): OrderBookState &
