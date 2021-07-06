@@ -32,8 +32,18 @@ export default function OrderBook({
         </select>
       </header>
       <div className="order-book-body">
-        <BookSegment data={buys} className="buy-container" />
-        <BookSegment data={sells} className="sell-container" />
+        <BookSegment
+          depthStartSide="right"
+          data={buys}
+          className="buy-container"
+          barAndTextColor="red"
+        />
+        <BookSegment
+          depthStartSide="left"
+          data={sells}
+          className="sell-container"
+          barAndTextColor="green"
+        />
       </div>
       <div className="order-book-footer">
         <button type="button" onClick={handleProductChange} className="primary">

@@ -14,12 +14,47 @@
   display: flex;
 }
 
-.book-segment-row {
-  margin-top: 0.5rem;
+.book-segment-info {
+  background-color: var(--dark-blue);
+  display: flex;
+  position: relative;
+  padding: 0.5rem 0;
+  opacity: 0.8;
+  z-index: 2;
+  width: 100%;
 }
 
-.book-segment > header > h3,
-.book-segment-row > div {
+.book-segment-row.red .price {
+  color: var(--text-red);
+}
+
+.book-segment-row.green .price {
+  color: var(--text-green);
+}
+
+.book-segment-info > div {
+  display: flex;
+  flex-basis: 30%;
+  justify-content: flex-end;
+}
+
+.book-segment-row {
+  position: relative;
+  z-index: 100;
+}
+
+.book-segment-row > svg {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+}
+
+.book-segment-row > svg.right {
+  transform: rotate(180deg);
+}
+
+.book-segment > header > h3 {
   display: flex;
   flex-basis: 30%;
   justify-content: flex-end;

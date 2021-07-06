@@ -6,11 +6,15 @@ import BookSegmentRow from "./BookSegmentRow";
 interface Props {
   data: BookSideState;
   className?: string;
+  depthStartSide: "left" | "right";
+  barAndTextColor: "red" | "green";
 }
 
 export default function BookSegment({
   data,
   className = "",
+  depthStartSide,
+  barAndTextColor,
 }: Props): JSX.Element {
   return (
     <div className={classNames("book-segment", className)}>
@@ -22,6 +26,7 @@ export default function BookSegment({
       <div className="book-segment-body">
         {data.map((dataPoint: BookSideStateItem) => {
           const [price, size, total] = dataPoint;
+          const [, , highestTotal] = data[data.length - 1];
 
           return (
             <BookSegmentRow
@@ -29,6 +34,9 @@ export default function BookSegment({
               price={price}
               size={size}
               total={total}
+              depthPercent={total / highestTotal}
+              originationClass={depthStartSide}
+              barAndTextColor={barAndTextColor}
             />
           );
         })}
