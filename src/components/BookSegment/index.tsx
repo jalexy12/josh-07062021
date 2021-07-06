@@ -22,7 +22,15 @@ export default function BookSegment({
       <div className="book-segment-body">
         {data.map((dataPoint: BookSideStateItem) => {
           const [price, size, total] = dataPoint;
-          return <BookSegmentRow price={price} size={size} total={total} />;
+
+          return (
+            <BookSegmentRow
+              key={price}
+              price={price}
+              size={size}
+              total={total}
+            />
+          );
         })}
       </div>
     </div>

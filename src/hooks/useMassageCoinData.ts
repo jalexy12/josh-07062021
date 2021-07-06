@@ -6,58 +6,59 @@ import {
   OrderBookStateHandlers,
   BookSideStateItem,
 } from "../types";
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState } from "react";
 import ReactDOM from "react-dom";
 
-function tabulateBook(itemsToMerge: { [key: number]: number } = {}) {
-  return (
-    newData: BookSideState,
-    dataPoint: BookDeltaResponse | BookSideStateItem,
-    index: number
-  ): BookSideState => {
+function tabulateBook(
+  newData: BookSideState,
+  dataPoint: BookDeltaResponse | BookSideStateItem,
+  index: number
+) {
+  const [price, size] = dataPoint;
+
+  if (size > 0) {
     const previousItem = newData[index - 1];
     const prevTotal = previousItem ? previousItem[2] : 0;
 
-    const [price, size] = dataPoint;
-    const newSize: number | null =
-      itemsToMerge && itemsToMerge[price] && Number(itemsToMerge[price]);
+    return newData.concat([[price, size, prevTotal + size]]);
+  }
 
-    if (size > 0 || (newSize && newSize > 0)) {
-      if (newSize) {
-        return newData.concat([[price, newSize, prevTotal + newSize]]);
-      } else {
-        return newData.concat([[price, size, prevTotal + size]]);
-      }
-    }
-
-    return newData;
-  };
+  return newData;
 }
 
 function initialInsertion(prospectiveValues: BookDeltaResponse[]) {
-  return prospectiveValues.reduce(tabulateBook(), []);
+  return prospectiveValues.reduce(tabulateBook, []);
 }
 
 function massageCoinData(
   prospectiveValues: BookDeltaResponse[],
   currentData: BookSideState
 ): BookSideState {
-  const valuesToInsert = prospectiveValues.reduce(
-    (memo: { [key: number]: number }, itemToMemo: BookDeltaResponse) => {
+  const valuesToInsert = [...currentData, ...prospectiveValues].reduce(
+    (
+      memo: { [key: number]: number },
+      itemToMemo: BookDeltaResponse | BookSideStateItem
+    ) => {
       const [price, size] = itemToMemo;
-      memo[price] = size;
+
+      if (size > 0) {
+        memo[price] = size;
+      }
+
       return memo;
     },
     {}
   );
 
-  return currentData.reduce(tabulateBook(valuesToInsert), []);
+  const mergedData: BookDeltaResponse[] = Object.keys(valuesToInsert).map(
+    (price) => [Number(price), valuesToInsert[Number(price)]]
+  );
+
+  return mergedData.reduce(tabulateBook, []).slice(0, 25);
 }
 
 export default function useMassageCoinData(): OrderBookState &
   OrderBookStateHandlers {
-  const lastUpdate = useRef(new Date());
-  const waitingForFlush = useRef<CryptoResponse>({ asks: [], bids: [] });
   const [bids, setBids] = useState<BookSideState>([]);
   const [asks, setAsks] = useState<BookSideState>([]);
 
@@ -67,36 +68,11 @@ export default function useMassageCoinData(): OrderBookState &
   }, []);
 
   const handleTricklingData = useCallback((data: CryptoResponse): void => {
-    const dateComparator = new Date();
-    const shouldUpdate: boolean =
-      dateComparator.getTime() - lastUpdate.current.getTime() > 1000;
-
-    if (shouldUpdate) {
-      ReactDOM.unstable_batchedUpdates(() => {
-        console.log(waitingForFlush.current);
-        setBids((currentBids) =>
-          massageCoinData(
-            [...waitingForFlush.current.bids, ...data.bids],
-            currentBids
-          )
-        );
-        setAsks((currentAsks) =>
-          massageCoinData(
-            [...waitingForFlush.current.asks, ...data.asks],
-            currentAsks
-          )
-        );
-      });
-
-      waitingForFlush.current = { asks: [], bids: [] };
-      lastUpdate.current = new Date();
-    } else {
-      waitingForFlush.current = {
-        asks: waitingForFlush.current.asks.concat(data.asks),
-        bids: waitingForFlush.current.bids.concat(data.bids),
-      };
-    }
+    ReactDOM.unstable_batchedUpdates(() => {
+      setBids((currentBids) => massageCoinData(data.bids, currentBids));
+      setAsks((currentAsks) => massageCoinData(data.asks, currentAsks));
+    });
   }, []);
-  console.log(bids.length, asks.length);
+
   return { sells: asks, buys: bids, handleInitialData, handleTricklingData };
 }

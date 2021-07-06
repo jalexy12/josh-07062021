@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  CryptoResponse,
   OrderBookState,
   OrderBookStateHandlers,
   WebSocketState,
@@ -21,13 +22,16 @@ export default function useHandleWebsocketConnection(
     ...coinData
   }: OrderBookState & OrderBookStateHandlers = useMassageCoinData();
 
+  const lastUpdate = useRef(new Date());
+  const waitingForFlush = useRef<CryptoResponse>({ asks: [], bids: [] });
+
   const handleError = useCallback(() => setIsError(true), []);
   const handleClose = useCallback(() => setIsClosed(true), []);
 
   const handleMessage = useCallback(
     (e) => {
       try {
-        const response = JSON.parse(e.data);
+        const response: CryptoResponse = JSON.parse(e.data);
 
         if (response.event) {
           console.warn("Connecting to WS", response);
@@ -38,9 +42,29 @@ export default function useHandleWebsocketConnection(
           case "book_ui_1_snapshot":
             return handleInitialData(response);
           case "book_ui_1":
-            return handleTricklingData(response);
+            const dateComparator = new Date();
+            const shouldUpdate: boolean =
+              dateComparator.getTime() - lastUpdate.current.getTime() > 1500;
+
+            if (shouldUpdate) {
+              const mergedResponse: CryptoResponse = {
+                bids: [...waitingForFlush.current.bids, ...response.bids],
+                asks: [...waitingForFlush.current.asks, ...response.asks],
+              };
+
+              waitingForFlush.current = { bids: [], asks: [] };
+              lastUpdate.current = dateComparator;
+              return handleTricklingData(mergedResponse);
+            } else {
+              waitingForFlush.current.asks =
+                waitingForFlush.current.asks.concat(response.asks);
+              waitingForFlush.current.bids =
+                waitingForFlush.current.bids.concat(response.bids);
+              return;
+            }
           default:
             console.warn("Error receiving message: ", response);
+            break;
         }
       } catch {
         setIsError(true);

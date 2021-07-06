@@ -1,10 +1,12 @@
+import React from "react";
+
 interface Props {
   price: number;
   size: number;
   total: number;
 }
 
-export default function BookSegmentRow({ total, price, size }: Props) {
+function BookSegmentRow({ total, price, size }: Props) {
   return (
     <div className="book-segment-row">
       <div className="total">{total}</div>
@@ -13,3 +15,5 @@ export default function BookSegmentRow({ total, price, size }: Props) {
     </div>
   );
 }
+
+export default React.memo(BookSegmentRow);

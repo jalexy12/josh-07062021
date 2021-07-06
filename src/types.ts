@@ -1,6 +1,8 @@
 export interface CryptoResponse {
   asks: BookDeltaResponse[];
   bids: BookDeltaResponse[];
+  event?: string;
+  feed?: string;
 }
 
 export type BookDeltaResponse = [price: number, size: number];
