@@ -22,9 +22,19 @@ export interface OrderBookStateHandlers {
 export interface WebSocketState {
   isClosed: boolean;
   isError: boolean;
-  data: OrderBookState;
 }
+
 export type GroupingData = {
   groupSize: number;
   defaultForProduct: number;
+};
+
+export enum Products {
+  BTC_PRODUCT = "PI_XBTUSD",
+  ETH_PRODUCT = "PI_ETHUSD",
+}
+
+export const ProductGroupings = {
+  [Products.BTC_PRODUCT]: [0.5, 1, 2.5],
+  [Products.ETH_PRODUCT]: [0.05, 0.1, 0.25],
 };

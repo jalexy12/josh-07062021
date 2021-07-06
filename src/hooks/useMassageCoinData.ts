@@ -124,36 +124,28 @@ function massageCoinData(
     .reduce(tabulateBook, []);
 }
 
-export default function useMassageCoinData(): OrderBookState &
-  OrderBookStateHandlers {
+export default function useMassageCoinData(
+  groupData: GroupingData
+): OrderBookState & OrderBookStateHandlers {
+  console.log(groupData);
   const [bids, setBids] = useState<BookSideState>([]);
   const [asks, setAsks] = useState<BookSideState>([]);
 
-  const handleInitialData = useCallback((data: CryptoResponse): void => {
-    setBids(
-      initialInsertion(data.bids, { groupSize: 1, defaultForProduct: 0.5 })
-    );
-    setAsks(
-      initialInsertion(data.asks, { groupSize: 1, defaultForProduct: 0.5 })
-    );
-  }, []);
+  const handleInitialData = (data: CryptoResponse): void => {
+    setBids(initialInsertion(data.bids, groupData));
+    setAsks(initialInsertion(data.asks, groupData));
+  };
 
-  const handleTricklingData = useCallback((data: CryptoResponse): void => {
+  const handleTricklingData = (data: CryptoResponse): void => {
     ReactDOM.unstable_batchedUpdates(() => {
       setBids((currentBids) =>
-        massageCoinData(data.bids, currentBids, {
-          groupSize: 1,
-          defaultForProduct: 0.5,
-        })
+        massageCoinData(data.bids, currentBids, groupData)
       );
       setAsks((currentAsks) =>
-        massageCoinData(data.asks, currentAsks, {
-          groupSize: 1,
-          defaultForProduct: 0.5,
-        })
+        massageCoinData(data.asks, currentAsks, groupData)
       );
     });
-  }, []);
+  };
 
   return { sells: asks, buys: bids, handleInitialData, handleTricklingData };
 }

@@ -1,20 +1,30 @@
+import { ChangeEventHandler } from "react";
 import { OrderBookState } from "../../types";
 import BookSegment from "../BookSegment";
 
 import "./styles.css";
 
+interface Props {
+  availableGroups: number[];
+  currentGroup: number;
+  handleGroupChange: ChangeEventHandler;
+}
+
 export default function OrderBook({
   buys,
   sells,
-}: OrderBookState): JSX.Element {
+  availableGroups,
+  currentGroup,
+  handleGroupChange,
+}: OrderBookState & Props): JSX.Element {
   return (
     <div className="order-book-container">
       <header>
         <h2>Order Book</h2>
-        <select>
-          <option>Group 0.50</option>
-          <option>Group 1</option>
-          <option>Group 2.5</option>
+        <select onChange={handleGroupChange} value={currentGroup}>
+          {availableGroups.map((group) => (
+            <option value={group}>Group {group}</option>
+          ))}
         </select>
       </header>
       <div className="order-book-body">

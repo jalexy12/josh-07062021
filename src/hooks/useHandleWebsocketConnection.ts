@@ -1,26 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  CryptoResponse,
-  OrderBookState,
-  OrderBookStateHandlers,
-  WebSocketState,
-} from "../types";
+import { CryptoResponse, WebSocketState } from "../types";
 import { SOCKET_STATES, SocketHandler } from "../socketHandler";
 import { BTC_PRODUCT, EVENT_TYPE, FEED_TYPE } from "../constants";
-import useMassageCoinData from "./useMassageCoinData";
 
 export default function useHandleWebsocketConnection(
-  socketHandler: SocketHandler
+  socketHandler: SocketHandler,
+  {
+    handleInitialData,
+    handleTricklingData,
+  }: {
+    handleInitialData: Function;
+    handleTricklingData: Function;
+  }
 ): WebSocketState {
   const [isError, setIsError] = useState<boolean>(false);
   const [isClosed, setIsClosed] = useState<boolean>(
     socketHandler.currentSocketState !== SOCKET_STATES[SOCKET_STATES.OPEN]
   );
-  const {
-    handleInitialData,
-    handleTricklingData,
-    ...coinData
-  }: OrderBookState & OrderBookStateHandlers = useMassageCoinData();
 
   const lastUpdate = useRef(new Date());
   const waitingForFlush = useRef<CryptoResponse>({ asks: [], bids: [] });
@@ -66,22 +62,21 @@ export default function useHandleWebsocketConnection(
             console.warn("Error receiving message: ", response);
             break;
         }
-      } catch {
+      } catch (e) {
+        console.log(e);
         setIsError(true);
       }
     },
     [handleInitialData, handleTricklingData]
   );
 
-  const handleOpen = useCallback(
-    () =>
-      socketHandler.sendMessage({
-        event: EVENT_TYPE,
-        feed: FEED_TYPE,
-        product_ids: [BTC_PRODUCT],
-      }),
-    []
-  );
+  const handleOpen = useCallback((e) => {
+    socketHandler.sendMessage({
+      event: EVENT_TYPE,
+      feed: FEED_TYPE,
+      product_ids: [BTC_PRODUCT],
+    });
+  }, []);
 
   useEffect(() => {
     socketHandler.initialize({
@@ -92,11 +87,10 @@ export default function useHandleWebsocketConnection(
     });
 
     return socketHandler.terminate.bind(socketHandler);
-  }, [handleError, handleClose, handleMessage, handleOpen]);
+  }, [handleClose, handleMessage, handleOpen, handleError]);
 
   return {
     isClosed,
     isError,
-    data: coinData,
   };
 }

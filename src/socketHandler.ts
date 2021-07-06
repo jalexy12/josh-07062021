@@ -52,6 +52,7 @@ export class SocketHandler {
   terminate(): void {
     if (this.activeSocket) {
       this.activeSocket.close();
+      this.activeSocket = null;
     }
   }
 
