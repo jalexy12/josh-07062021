@@ -1,9 +1,15 @@
-import { Products, ProductGroupings, GroupingData } from "../types";
-import { ChangeEventHandler, useCallback, useState } from "react";
+import { GroupingData, ProductGroupings, Products } from "../types";
+import {
+  ChangeEventHandler,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 interface ProductState {
   product: Products;
-  handleProductChange: Function;
+  handleProductChange: MouseEventHandler;
   handleGroupingChange: ChangeEventHandler;
   groupingData: GroupingData;
 }
@@ -12,12 +18,23 @@ export default function useManageProduct(
   defaultProduct: Products
 ): ProductState {
   const [currentProduct, setCurrentProduct] = useState(defaultProduct);
+
   const [currentGrouping, setCurrentGrouping] = useState(
     ProductGroupings[currentProduct][0]
   );
 
-  const handleProductChange = useCallback(
-    (product: Products) => setCurrentProduct(product),
+  useEffect(
+    () => setCurrentGrouping(ProductGroupings[currentProduct][0]),
+    [currentProduct]
+  );
+
+  const handleProductChange: MouseEventHandler = useCallback(
+    () =>
+      setCurrentProduct((currentProduct) => {
+        return currentProduct === Products.BTC_PRODUCT
+          ? Products.ETH_PRODUCT
+          : Products.BTC_PRODUCT;
+      }),
     []
   );
 

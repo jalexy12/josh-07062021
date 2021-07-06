@@ -24,6 +24,7 @@ function App() {
   });
   const { isClosed, isError }: WebSocketState = useHandleWebsocketConnection(
     socketHandler,
+    product,
     { handleInitialData, handleTricklingData }
   );
 
@@ -35,6 +36,7 @@ function App() {
         handleGroupChange={handleGroupingChange}
         buys={coinData.buys}
         sells={coinData.sells}
+        handleProductChange={handleProductChange}
       />
     </main>
   );

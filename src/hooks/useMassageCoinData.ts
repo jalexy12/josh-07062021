@@ -7,7 +7,7 @@ import {
   BookSideStateItem,
   GroupingData,
 } from "../types";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import ReactDOM from "react-dom";
 
 function tabulateBook(

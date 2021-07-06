@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CryptoResponse, WebSocketState } from "../types";
+import { CryptoResponse, Products, WebSocketState } from "../types";
 import { SOCKET_STATES, SocketHandler } from "../socketHandler";
-import { BTC_PRODUCT, EVENT_TYPE, FEED_TYPE } from "../constants";
+import { EVENT_TYPE, FEED_TYPE } from "../constants";
 
 export default function useHandleWebsocketConnection(
   socketHandler: SocketHandler,
+  product: Products,
   {
     handleInitialData,
     handleTricklingData,
@@ -70,13 +71,13 @@ export default function useHandleWebsocketConnection(
     [handleInitialData, handleTricklingData]
   );
 
-  const handleOpen = useCallback((e) => {
+  const handleOpen = useCallback(() => {
     socketHandler.sendMessage({
       event: EVENT_TYPE,
       feed: FEED_TYPE,
-      product_ids: [BTC_PRODUCT],
+      product_ids: [product],
     });
-  }, []);
+  }, [product]);
 
   useEffect(() => {
     socketHandler.initialize({
@@ -87,7 +88,7 @@ export default function useHandleWebsocketConnection(
     });
 
     return socketHandler.terminate.bind(socketHandler);
-  }, [handleClose, handleMessage, handleOpen, handleError]);
+  }, [handleClose, handleMessage, handleOpen, handleError, product]);
 
   return {
     isClosed,

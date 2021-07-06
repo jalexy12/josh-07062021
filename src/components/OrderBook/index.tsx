@@ -1,4 +1,4 @@
-import { ChangeEventHandler } from "react";
+import { ChangeEventHandler, MouseEventHandler } from "react";
 import { OrderBookState } from "../../types";
 import BookSegment from "../BookSegment";
 
@@ -8,6 +8,7 @@ interface Props {
   availableGroups: number[];
   currentGroup: number;
   handleGroupChange: ChangeEventHandler;
+  handleProductChange: MouseEventHandler;
 }
 
 export default function OrderBook({
@@ -16,6 +17,7 @@ export default function OrderBook({
   availableGroups,
   currentGroup,
   handleGroupChange,
+  handleProductChange,
 }: OrderBookState & Props): JSX.Element {
   return (
     <div className="order-book-container">
@@ -32,7 +34,9 @@ export default function OrderBook({
         <BookSegment data={sells} className="sell-container" />
       </div>
       <div className="order-book-footer">
-        <button className="primary">Toggle Feed</button>
+        <button type="button" onClick={handleProductChange} className="primary">
+          Toggle Feed
+        </button>
         <button className="danger">Kill Feed</button>
       </div>
     </div>
