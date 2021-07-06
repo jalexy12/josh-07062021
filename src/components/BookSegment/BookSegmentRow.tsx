@@ -25,7 +25,7 @@ function BookSegmentRow({
           width={`${depthPercent * 100}%`}
           height="100%"
           fill={barAndTextColor === "red" ? "#B7383B" : "#0DA073"}
-          fillOpacity="0.5"
+          fillOpacity="1"
           strokeOpacity="0"
         />
       </svg>
