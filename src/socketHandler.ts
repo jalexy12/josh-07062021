@@ -57,6 +57,10 @@ export class SocketHandler {
   }
 
   sendMessage(message: WebSocketMessage): void {
+    this.sendGenericMessage(message);
+  }
+
+  sendGenericMessage(message: any): void {
     try {
       const stringifiedMessage = JSON.stringify(message);
 

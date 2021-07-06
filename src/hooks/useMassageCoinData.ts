@@ -7,7 +7,7 @@ import {
   BookSideStateItem,
   GroupingData,
 } from "../types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import ReactDOM from "react-dom";
 
 export default function useMassageCoinData(
@@ -17,21 +17,27 @@ export default function useMassageCoinData(
   const [bids, setBids] = useState<BookSideState>([]);
   const [asks, setAsks] = useState<BookSideState>([]);
 
-  const handleInitialData = (data: CryptoResponse): void => {
-    setBids(initialInsertion(data.bids, groupData));
-    setAsks(initialInsertion(data.asks, groupData));
-  };
+  const handleInitialData = useCallback(
+    (data: CryptoResponse): void => {
+      setBids(initialInsertion(data.bids, groupData));
+      setAsks(initialInsertion(data.asks, groupData));
+    },
+    [groupData]
+  );
 
-  const handleTricklingData = (data: CryptoResponse): void => {
-    ReactDOM.unstable_batchedUpdates(() => {
-      setBids((currentBids) =>
-        massageCoinData(data.bids, currentBids, groupData)
-      );
-      setAsks((currentAsks) =>
-        massageCoinData(data.asks, currentAsks, groupData)
-      );
-    });
-  };
+  const handleTricklingData = useCallback(
+    (data: CryptoResponse): void => {
+      ReactDOM.unstable_batchedUpdates(() => {
+        setBids((currentBids) =>
+          massageCoinData(data.bids, currentBids, groupData)
+        );
+        setAsks((currentAsks) =>
+          massageCoinData(data.asks, currentAsks, groupData)
+        );
+      });
+    },
+    [groupData]
+  );
 
   return { sells: asks, buys: bids, handleInitialData, handleTricklingData };
 }

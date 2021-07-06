@@ -1,3 +1,5 @@
+import { MouseEventHandler } from "react";
+
 export interface CryptoResponse {
   asks: BookDeltaResponse[];
   bids: BookDeltaResponse[];
@@ -21,7 +23,8 @@ export interface OrderBookStateHandlers {
 
 export interface WebSocketState {
   isClosed: boolean;
-  isError: boolean;
+  error: string;
+  createForcedError: MouseEventHandler;
 }
 
 export type GroupingData = {

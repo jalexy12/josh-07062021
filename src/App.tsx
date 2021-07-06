@@ -10,6 +10,8 @@ import {
   Products,
   ProductGroupings,
 } from "./types";
+import toast, { Toaster } from "react-hot-toast";
+import { useEffect } from "react";
 
 function App() {
   const { product, groupingData, handleProductChange, handleGroupingChange } =
@@ -19,14 +21,20 @@ function App() {
     handleInitialData,
     handleTricklingData,
     ...coinData
-  }: OrderBookState & OrderBookStateHandlers = useMassageCoinData({
-    ...groupingData,
-  });
-  const { isClosed, isError }: WebSocketState = useHandleWebsocketConnection(
-    socketHandler,
-    product,
-    { handleInitialData, handleTricklingData }
-  );
+  }: OrderBookState & OrderBookStateHandlers = useMassageCoinData(groupingData);
+  const { error, createForcedError }: WebSocketState =
+    useHandleWebsocketConnection(socketHandler, product, {
+      handleInitialData,
+      handleTricklingData,
+    });
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+
+    return toast.dismiss;
+  }, [error]);
 
   return (
     <main className="app">
@@ -37,7 +45,9 @@ function App() {
         buys={coinData.buys}
         sells={coinData.sells}
         handleProductChange={handleProductChange}
+        createForcedError={createForcedError}
       />
+      <Toaster />
     </main>
   );
 }

@@ -9,6 +9,7 @@ interface Props {
   currentGroup: number;
   handleGroupChange: ChangeEventHandler;
   handleProductChange: MouseEventHandler;
+  createForcedError: MouseEventHandler;
 }
 
 export default function OrderBook({
@@ -18,6 +19,7 @@ export default function OrderBook({
   currentGroup,
   handleGroupChange,
   handleProductChange,
+  createForcedError,
 }: OrderBookState & Props): JSX.Element {
   return (
     <div className="order-book-container">
@@ -37,7 +39,9 @@ export default function OrderBook({
         <button type="button" onClick={handleProductChange} className="primary">
           Toggle Feed
         </button>
-        <button className="danger">Kill Feed</button>
+        <button type="button" onClick={createForcedError} className="danger">
+          Kill Feed
+        </button>
       </div>
     </div>
   );

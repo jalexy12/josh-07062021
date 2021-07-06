@@ -14,7 +14,7 @@ export default function useHandleWebsocketConnection(
     handleTricklingData: Function;
   }
 ): WebSocketState {
-  const [isError, setIsError] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const [isClosed, setIsClosed] = useState<boolean>(
     socketHandler.currentSocketState !== SOCKET_STATES[SOCKET_STATES.OPEN]
   );
@@ -22,13 +22,28 @@ export default function useHandleWebsocketConnection(
   const lastUpdate = useRef(new Date());
   const waitingForFlush = useRef<CryptoResponse>({ asks: [], bids: [] });
 
-  const handleError = useCallback(() => setIsError(true), []);
+  const handleError = useCallback((e: string | Event) => {
+    setError(typeof e === "string" ? e : "Unknown websocket error");
+    setTimeout(() => setError(""), 2000);
+  }, []);
   const handleClose = useCallback(() => setIsClosed(true), []);
 
   const handleMessage = useCallback(
     (e) => {
       try {
         const response: CryptoResponse = JSON.parse(e.data);
+
+        if (response.event === "alert") {
+          handleError(
+            `Error from WS - connection status: ${
+              socketHandler.currentSocketState !==
+              SOCKET_STATES[SOCKET_STATES.OPEN]
+                ? "Closed"
+                : "Still Open"
+            }`
+          );
+          return;
+        }
 
         if (response.event) {
           console.warn("Connecting to WS", response);
@@ -64,11 +79,10 @@ export default function useHandleWebsocketConnection(
             break;
         }
       } catch (e) {
-        console.log(e);
-        setIsError(true);
+        setError(e.message);
       }
     },
-    [handleInitialData, handleTricklingData]
+    [handleInitialData, handleTricklingData, handleError]
   );
 
   const handleOpen = useCallback(() => {
@@ -78,6 +92,14 @@ export default function useHandleWebsocketConnection(
       product_ids: [product],
     });
   }, [product]);
+
+  const createForcedError = () => {
+    socketHandler.sendGenericMessage({
+      event: "Nonsense",
+      feed: "Doesnt exist",
+      product_ids: [product],
+    });
+  };
 
   useEffect(() => {
     socketHandler.initialize({
@@ -92,6 +114,7 @@ export default function useHandleWebsocketConnection(
 
   return {
     isClosed,
-    isError,
+    error,
+    createForcedError,
   };
 }

@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useState,
+  useMemo,
 } from "react";
 
 interface ProductState {
@@ -43,10 +44,13 @@ export default function useManageProduct(
     []
   );
 
-  const groupingData: GroupingData = {
-    groupSize: currentGrouping,
-    defaultForProduct: ProductGroupings[currentProduct][0],
-  };
+  const groupingData: GroupingData = useMemo<GroupingData>(
+    () => ({
+      groupSize: currentGrouping,
+      defaultForProduct: ProductGroupings[currentProduct][0],
+    }),
+    [currentGrouping, currentProduct]
+  );
 
   return {
     product: currentProduct,
