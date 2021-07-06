@@ -24,3 +24,7 @@ export interface WebSocketState {
   isError: boolean;
   data: OrderBookState;
 }
+export type GroupingData = {
+  groupSize: number;
+  defaultForProduct: number;
+};
