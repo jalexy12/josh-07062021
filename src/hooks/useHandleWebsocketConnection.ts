@@ -22,10 +22,20 @@ export default function useHandleWebsocketConnection(
   const lastUpdate = useRef(new Date());
   const waitingForFlush = useRef<CryptoResponse>({ asks: [], bids: [] });
 
-  const handleError = useCallback((e: string | Event) => {
-    setError(typeof e === "string" ? e : "Unknown websocket error");
+  const handleError = useCallback((e: any) => {
+    if (typeof e === "string") {
+      setError(e);
+    } else {
+      setError(
+        e.readyState !== SOCKET_STATES.OPEN
+          ? "Connection closed -- likely switching feeds"
+          : "Unknown WS error"
+      );
+    }
+
     setTimeout(() => setError(""), 2000);
   }, []);
+
   const handleClose = useCallback(() => setIsClosed(true), []);
 
   const handleMessage = useCallback(
@@ -46,7 +56,7 @@ export default function useHandleWebsocketConnection(
         }
 
         if (response.event) {
-          console.warn("Connecting to WS", response);
+          console.log("Connecting to WS", response);
           return;
         }
 
@@ -110,7 +120,7 @@ export default function useHandleWebsocketConnection(
     });
 
     return socketHandler.terminate.bind(socketHandler);
-  }, [handleClose, handleMessage, handleOpen, handleError, product]);
+  }, [handleClose, handleMessage, handleOpen, handleError]);
 
   return {
     isClosed,

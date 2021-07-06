@@ -13,7 +13,6 @@ import ReactDOM from "react-dom";
 export default function useMassageCoinData(
   groupData: GroupingData
 ): OrderBookState & OrderBookStateHandlers {
-  console.log(groupData);
   const [bids, setBids] = useState<BookSideState>([]);
   const [asks, setAsks] = useState<BookSideState>([]);
 
