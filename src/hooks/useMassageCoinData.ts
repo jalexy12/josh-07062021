@@ -10,6 +10,32 @@ import {
 import { useState } from "react";
 import ReactDOM from "react-dom";
 
+export default function useMassageCoinData(
+  groupData: GroupingData
+): OrderBookState & OrderBookStateHandlers {
+  console.log(groupData);
+  const [bids, setBids] = useState<BookSideState>([]);
+  const [asks, setAsks] = useState<BookSideState>([]);
+
+  const handleInitialData = (data: CryptoResponse): void => {
+    setBids(initialInsertion(data.bids, groupData));
+    setAsks(initialInsertion(data.asks, groupData));
+  };
+
+  const handleTricklingData = (data: CryptoResponse): void => {
+    ReactDOM.unstable_batchedUpdates(() => {
+      setBids((currentBids) =>
+        massageCoinData(data.bids, currentBids, groupData)
+      );
+      setAsks((currentAsks) =>
+        massageCoinData(data.asks, currentAsks, groupData)
+      );
+    });
+  };
+
+  return { sells: asks, buys: bids, handleInitialData, handleTricklingData };
+}
+
 function tabulateBook(
   newData: BookSideState,
   dataPoint: BookDeltaResponse | BookSideStateItem,
@@ -122,30 +148,4 @@ function massageCoinData(
   return groupData(grouped, groupingData.groupSize)
     .slice(startIndex, grouped.length)
     .reduce(tabulateBook, []);
-}
-
-export default function useMassageCoinData(
-  groupData: GroupingData
-): OrderBookState & OrderBookStateHandlers {
-  console.log(groupData);
-  const [bids, setBids] = useState<BookSideState>([]);
-  const [asks, setAsks] = useState<BookSideState>([]);
-
-  const handleInitialData = (data: CryptoResponse): void => {
-    setBids(initialInsertion(data.bids, groupData));
-    setAsks(initialInsertion(data.asks, groupData));
-  };
-
-  const handleTricklingData = (data: CryptoResponse): void => {
-    ReactDOM.unstable_batchedUpdates(() => {
-      setBids((currentBids) =>
-        massageCoinData(data.bids, currentBids, groupData)
-      );
-      setAsks((currentAsks) =>
-        massageCoinData(data.asks, currentAsks, groupData)
-      );
-    });
-  };
-
-  return { sells: asks, buys: bids, handleInitialData, handleTricklingData };
 }
