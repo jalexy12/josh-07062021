@@ -22,6 +22,7 @@ function App() {
     handleTricklingData,
     ...coinData
   }: OrderBookState & OrderBookStateHandlers = useMassageCoinData(groupingData);
+
   const { error, createForcedError }: WebSocketState =
     useHandleWebsocketConnection(socketHandler, product, {
       handleInitialData,
