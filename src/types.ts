@@ -22,7 +22,6 @@ export interface OrderBookStateHandlers {
 }
 
 export interface WebSocketState {
-  isClosed: boolean;
   error: string;
   createForcedError: MouseEventHandler;
 }

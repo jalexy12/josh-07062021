@@ -1,7 +1,7 @@
 import { EVENT_TYPE, FEED_TYPE } from "./constants";
 
 export interface WebSocketMessage {
-  event: typeof EVENT_TYPE;
+  event: typeof EVENT_TYPE | "unsubscribe";
   feed: typeof FEED_TYPE;
   product_ids: string[];
 }

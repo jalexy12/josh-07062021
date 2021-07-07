@@ -15,10 +15,6 @@ export default function useHandleWebsocketConnection(
   }
 ): WebSocketState {
   const [error, setError] = useState<string>("");
-  const [isClosed, setIsClosed] = useState<boolean>(
-    socketHandler.currentSocketState !== SOCKET_STATES[SOCKET_STATES.OPEN]
-  );
-
   const lastUpdate = useRef(new Date());
   const waitingForFlush = useRef<CryptoResponse>({ asks: [], bids: [] });
 
@@ -36,8 +32,6 @@ export default function useHandleWebsocketConnection(
     setTimeout(() => setError(""), 2000);
   }, []);
 
-  const handleClose = useCallback(() => setIsClosed(true), []);
-
   const handleMessage = useCallback(
     (e) => {
       try {
@@ -52,7 +46,6 @@ export default function useHandleWebsocketConnection(
                 : "Still Open"
             }`
           );
-          return;
         }
 
         if (response.event) {
@@ -96,6 +89,8 @@ export default function useHandleWebsocketConnection(
   );
 
   const handleOpen = useCallback(() => {
+    waitingForFlush.current = { asks: [], bids: [] };
+
     socketHandler.sendMessage({
       event: EVENT_TYPE,
       feed: FEED_TYPE,
@@ -113,17 +108,23 @@ export default function useHandleWebsocketConnection(
 
   useEffect(() => {
     socketHandler.initialize({
-      onClose: handleClose,
+      onClose: () => {},
       onError: handleError,
       onMessage: handleMessage,
       onOpen: handleOpen,
     });
 
-    return socketHandler.terminate.bind(socketHandler);
-  }, [handleClose, handleMessage, handleOpen, handleError]);
+    return () => {
+      socketHandler.sendMessage({
+        event: "unsubscribe",
+        feed: FEED_TYPE,
+        product_ids: [Products.ETH_PRODUCT, Products.BTC_PRODUCT],
+      });
+      socketHandler.terminate();
+    };
+  }, [handleMessage, handleOpen, handleError]);
 
   return {
-    isClosed,
     error,
     createForcedError,
   };
